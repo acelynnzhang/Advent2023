@@ -2,22 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-int seeds[50];
-int seedto[50];
-int soil[50];
-int fertilizer[50];
-int water[50];
-int light[50];
-int temperature[50];
-int humidity[50];
-char* words[8] = {"seeds\0", "seedto\0", "soil", "fertilizer", "water", "light", "temperature", "humidity"};
+int words[8][10];
 
-void printseeds(char * in) {
+void printseeds(int * in) {
   printf("\n");
-  for (int i = 0; i < 50; i++) {
-    if (in[i] == '0'){
-      break;
-    }
+  for (int i = 0; i < 10; i++) {
     printf("(%d)", in[i]);
   }
   printf("\n");
@@ -28,26 +17,14 @@ void parse(char* input) {
   char* line = NULL;
   size_t len = 0;
   int curritem = 0;
-  char* currstring = calloc(15,1);
   int count = 0;
   while ((getline(&line, &len, fp)) != -1) {
-    if (strncmp(line, words[curritem], strlen(words[curritem])) == 0) {
-      free(currstring);
-      currstring = calloc(15,1);
-      strncat(currstring, words[curritem], strlen(words[curritem]));
-    }
-    // if () {
-    //   currstring[0] = '\0';
-    //   printf("->skip\n");
-    //   count = 0;
-    // }
     if (strncmp(line,"\n" , 1) != 0) {
-      printf("[%s]:%s\n", words[curritem], line);
       char* curr = calloc(100, 1);
       int strleng = 0;
-      for (int i = strlen(words[curritem]); i < len; i++){
+      for (int i = 0; i < len; i++){
         if ((line[i] == ' ' || line[i] == '\n') && strlen(curr) != 0) {
-          char* temp = calloc(10, 1);
+          char* temp = calloc(20, 1);
           strncat(temp, curr, strlen(curr));
           words[curritem][count] = atoi(temp);
           //printf(" ok:[%s]", temp);
@@ -57,13 +34,17 @@ void parse(char* input) {
           curr += strleng;
         }
         if (line[i] == '\n') {
-            curritem++;
             break;
-        } else if (line[i] != ' '){
+        } else if ( '0' <=line[i] && '9' >=line[i] ){
+          //printf("curr : %s\n",curr);
           curr[strleng] = line[i];
           strleng++;
         }
       }
+    } else {
+      //printf("\n->skip\n");
+      curritem++;
+      count = 0;
     }
   }
   fclose(fp);
@@ -74,6 +55,22 @@ void parse(char* input) {
 
 int main() {
   parse("input2.txt");
-  //printseeds("seeds");
+  for (int i = 0; i < 8; i++) {
+    printseeds(words[i]);
+  }
+  for (int i= 1; i < 8; i++) {
+    for (int j = 0; j < 4; j++) {
+      for (int k = 1; k < 10; k+=3) {
+         if (words[0][j] >= words[i][k] && words[0][j] <= words[i][k] + words[i][k +1]) {
+          words[0][j] = words[0][j]-  words[i][k] + words[i][k-1];
+          if (j == 0) {
+            printf(" -> %u @ %u, (%u, %u, %u)b",words[0][j], i, words[i][k-1],words[i][k] ,words[i][k+1]);
+          }
+          break;
+         }
+      }
+    }
+  }
+  
   return 0;
 }
