@@ -4,6 +4,14 @@
 
 int words[8][10];
 
+int digit(int thing) {
+  int count = 0;
+  while (thing/10 >=1) {
+    count ++;
+  }
+  return count;
+}
+
 void printseeds(int * in) {
   printf("\n");
   for (int i = 0; i < 10; i++) {
@@ -20,25 +28,14 @@ void parse(char* input) {
   int count = 0;
   while ((getline(&line, &len, fp)) != -1) {
     if (strncmp(line,"\n" , 1) != 0) {
-      char* curr = calloc(100, 1);
-      int strleng = 0;
+      int curr = -1;
       for (int i = 0; i < len; i++){
-        if ((line[i] == ' ' || line[i] == '\n') && strlen(curr) != 0) {
-          char* temp = calloc(20, 1);
-          strncat(temp, curr, strlen(curr));
-          words[curritem][count] = atoi(temp);
-          //printf(" ok:[%s]", temp);
-          free(temp);
-          count++;
-          strleng = 0;
-          curr += strleng;
-        }
         if (line[i] == '\n') {
             break;
-        } else if ( '0' <=line[i] && '9' >=line[i] ){
-          //printf("curr : %s\n",curr);
-          curr[strleng] = line[i];
-          strleng++;
+        }
+        if ( '0' <=line[i] && '9' >=line[i]){
+          words[curritem][count] =  scanf("%d", curr, line[i]);
+          i += digit(words[curritem][count]);
         }
       }
     } else {
