@@ -34,7 +34,8 @@ void parse(char* input) {
             break;
         }
         if ( '0' <=line[i] && '9' >=line[i]){
-          words[curritem][count] =  scanf("%d", curr, line[i]);
+           scanf("%d", &curr, line[i]);
+          words[curritem][count] = curr;
           i += digit(words[curritem][count]);
         }
       }
