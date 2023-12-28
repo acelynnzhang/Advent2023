@@ -4,21 +4,12 @@ handtypes  = {"fiveofakind": [], "fourofakind": [], "fullhouse": [], "threeofaki
 
 def toInt(x):
     if x not in letters:
-        curr = int(x)
+        return int(x)
+    if x == 'J':
+        return 1
     else:
-        for i in range(0, letters.__len__()):
-            if letters[i] == x:
-                curr = i + 10
+        curr = letters.index(x) + 10
     return curr
-
-def toarray(repeat, map):
-    toreturn = []
-    toreturn.append(repeat)
-    for x in map:
-        for y in sorted(map[x], reverse=True):
-            if y != 0:
-                toreturn.append(y)
-    return toreturn
 
 with open('input.txt', 'r') as file:
     for line in file:
@@ -27,9 +18,10 @@ with open('input.txt', 'r') as file:
         high = 1
         repeat= 0
         card = {"2" :[], "1" : []}
+        man = []
         for x in thing[0].strip():
             curr = toInt(x)
-            if (curr != repeat):
+            if (curr != repeat and curr != 1):
                 if thing[0].count(x) > high:
                     card[str(high)].append(toInt(repeat))
                     high = thing[0].count(x)
@@ -39,23 +31,24 @@ with open('input.txt', 'r') as file:
                     repeat = curr
                 elif toInt(x) not in card['2'] and toInt(x) not in card['1']:
                     card[str(thing[0].count(x))].append(toInt(x))
-        #print(thing[0] + "high count = " + str(high) + " repeat = " + str(repeat))
-        if high == 5:
-            handtypes['fiveofakind'].append([toarray(repeat, card), thing[1]])
+            man.append(curr)
+        high += thing[0].count('J')
+        if high >= 5:
+            handtypes['fiveofakind'].append([man, thing[1]])
         if high == 4:
-            handtypes['fourofakind'].append([toarray(repeat, card), thing[1]])
+            handtypes['fourofakind'].append([man, thing[1]])
         if high == 3:
            if card['2'].__len__() > 0:
-                handtypes['fullhouse'].append([toarray(repeat, card), thing[1]])
+                handtypes['fullhouse'].append([man, thing[1]])
            else:
-                handtypes['threeofakind'].append([toarray(repeat, card), thing[1]])
+                handtypes['threeofakind'].append([man, thing[1]])
         if high == 2:
             if card['2'].__len__() > 0:
-                handtypes['twopair'].append([toarray(repeat, card), thing[1]])
+                handtypes['twopair'].append([man, thing[1]])
             else:
-                handtypes['pair'].append([toarray(repeat, card), thing[1]])
+                handtypes['pair'].append([man, thing[1]])
         if high == 1:  
-            handtypes['highcard'].append([toarray(repeat, card), thing[1]])
+            handtypes['highcard'].append([man, thing[1]])
 
 
 tot = 0
@@ -66,8 +59,7 @@ for x in handtypes:
     print('\n')
     for cards,bid in sorted(handtypes[x], reverse=True):
         tot += int(bid) * (countlines - placement)
+        # print(bid.replace('\n', '') + " * " + str(countlines - placement))
         placement += 1
         
 print(tot)
-    
-
