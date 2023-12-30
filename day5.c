@@ -11,7 +11,7 @@ void printseeds(unsigned long long* in) {
   printf("\n");
   for (int i = 0; i < 105; i++) {
     if (in[i] < smallest) {
-      smallest = in[i];
+      smallest = in[i];are
     }
     printf("(%llu)", in[i]);
   }

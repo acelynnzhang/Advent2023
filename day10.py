@@ -3,9 +3,9 @@ start = []
 grid = []
 linecount = 0
 
-with open("test.txt", "r") as f:
+with open("input.txt", "r") as f:
     lines = f.readlines()
-    seen = [[0] * len(lines[0])] * len(lines)
+    seen = [ [ 0 for i in range(len(lines[0])-1)] for j in range(len(lines))]
     for line in lines:
         currline = []
         for x in range(len(line)):
@@ -22,12 +22,12 @@ currloc = []
 currloc.append(start[0])
 currloc.append(start[1])
 steps  = 0 
-
+walls= []
+lim = [ 999 for j in range(len(lines))]
 while currloc != start or steps == 0:
-  #print(currloc)
-  # print("+")
-  # print(dirr)
-  seen[currloc[0]][currloc[1]] = 1
+  walls.append([currloc[0],currloc[1]])
+  if lim[currloc[0]] > currloc[1]:
+    lim[currloc[0]] = currloc[1]
   letter = grid[currloc[0] + dirr[0]][currloc[1] + dirr[1]]
   currloc[0] += dirr[0]
   currloc[1] += dirr[1]
@@ -67,25 +67,43 @@ while currloc != start or steps == 0:
     break
   steps +=1
 wall = sorted(walls, reverse=True)
-print(wall)
+#print(wall)
 count = 0
-otherwall = []
-interval = []
-mapp = {}
-con = True
+big = wall[0][0]
+print(grid[5])
 while len(wall) > 1:
   if wall[0][0] == wall[1][0]:
-    # while len(wall) > 1 and wall[0][1] == wall[1][1] +1:
-    #   wall.pop(0)
-    if len(wall) > 1 and wall[0][1] - wall[1][1] -1 > 0:
-      count += wall[0][1] - wall[1][1] -1
-      print(wall[:2])
+    while len(wall) > 1 and wall[0][1] - wall[1][1] -1 == 0 and grid[wall[0][0]][wall[0][1]] != '|' and grid[wall[1][0]][wall[1][1]] != '|':
+      seen[wall[0][0]][wall[0][1]] = -1
+      wall.pop(0)
+    seen[wall[0][0]][wall[0][1]] = 1
     wall.pop(0)
-    wall.pop(0)
-  else: 
+  else:
+    seen[wall[0][0]][wall[0][1]] = 1
     wall.pop(0)
 
-print(count)
+tot = 0
+print(seen[5])
+for row in range(big):
+  if (lim[row] != -1):
+    for col in range(lim[row], len(seen[row])):
+      if seen[row][col] == 0:
+        count = 0
+        for x in range(col, len(seen[row])):
+          if seen[row][x] == 1:
+            count +=1
+        if count % 2 == 1:
+          print(str(row) + " , " + str(col) +  " count- " + str(count))
+          tot += 1
+
+print(tot)
+  
+    
+
+    
+
+
+# print(count)
 # .....
 # .S-7.
 # .|.|.
