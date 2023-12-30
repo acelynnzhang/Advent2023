@@ -22,12 +22,12 @@ currloc = []
 currloc.append(start[0])
 currloc.append(start[1])
 steps  = 0 
-walls = []      
+
 while currloc != start or steps == 0:
   #print(currloc)
   # print("+")
   # print(dirr)
-  walls.append([currloc[0],currloc[1]])
+  seen[currloc[0]][currloc[1]] = 1
   letter = grid[currloc[0] + dirr[0]][currloc[1] + dirr[1]]
   currloc[0] += dirr[0]
   currloc[1] += dirr[1]
